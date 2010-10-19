@@ -19,7 +19,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <avr/io.h>
-#include "sle_bbg.h"
 #include "sle.h"
 
 struct sle_t* sle_init(void)

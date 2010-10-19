@@ -51,6 +51,8 @@
 #define SLE_RST 4
 #define SLE_CK 6
 #define SLE_IO 7
+
+/* You should not change anything below */
 #define OUT 2
 #define IN 3
 

@@ -26,6 +26,8 @@
 #ifndef SLE_H_
 #define SLE_H_
 
+#include "sle_bbg.h"
+
 /*!
   \def SLE_CMD_DUMP_MEMORY
   \brief SLE4442 Hex command to access the main memory.

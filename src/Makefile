@@ -1,7 +1,30 @@
+# This file is part of libsle4442.
+# Copyright (C) 2010 Enrico Rossi
+#
+# Libsle4442 is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Libsle4442 is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program.
+# If not, see <http://www.gnu.org/licenses/>.
+
+# Change the following line to match your hardware
+
+# The tipe of MCU
 MCU = atmega16
+# The clock frequency (ex. 4000000UL = 4 Mhz)
+FCPU = 4000000UL
+
+# You should not change anything below
 INC = -I/usr/avr/include/
 OPTLEV = 2
-FCPU = 4000000UL
 CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
 LFLAGS = -lm
 

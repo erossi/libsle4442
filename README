@@ -1,0 +1,12 @@
+This is a simple library to read/write to a Siemens SLE4442 chip card from an Atmel AtMega MCU.
+
+HowTo
+
+cd src
+Edit Makefile and change the MCU device and F_CPU value.
+Edit sle_bbg.h and change the PORT and PIN's number as your hardware requires.
+Run make and if it's all ok you should find libsle4442.a file created.
+
+To use the library just include the sle4442.h in your C programs then link the library.
+
+
