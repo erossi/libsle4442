@@ -26,6 +26,8 @@
 #ifndef SLE_H_
 #define SLE_H_
 
+#ifdef MAKE_LIB
+
 #include "sle_bbg.h"
 
 /*!
@@ -45,6 +47,8 @@
 #define SLE_CMD_COMPARE_VERIFICATION_DATA 0x33
 #define SLE_CMD_UPDATE_SECMEM 0x39
 #define SLE_CMD_UPDATE_MEMORY 0x38
+
+#endif /* Make lib */
 
 /*!
   \struct sle_t sle.h "sle.h"
