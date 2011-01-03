@@ -18,14 +18,14 @@
 # Change the following line to match your hardware
 
 # The tipe of MCU
-MCU = atmega16
+MCU = atmega164p
 # The clock frequency (ex. 4000000UL = 4 Mhz)
-FCPU = 4000000UL
+FCPU = 1000000UL
 
 # You should not change anything below
 INC = -I/usr/avr/include/
 OPTLEV = 2
-CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
+CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU) -D MAKE_LIB
 LFLAGS = -lm
 
 AR = avr-ar
