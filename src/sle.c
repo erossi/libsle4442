@@ -89,9 +89,9 @@ uint8_t sle_present(struct sle_t *sle)
 {
 
 	if (SLE_PIN & _BV(SLE_PRESENT))
-		sle->card_present=1;
-	else
 		sle->card_present=0;
+	else
+		sle->card_present=1;
 
 	return(sle->card_present);
 }

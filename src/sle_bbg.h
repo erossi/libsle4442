@@ -47,10 +47,10 @@
 #define SLE_PORT PORTA
 #define SLE_PIN PINA
 #define SLE_DDR DDRA
-#define SLE_PRESENT 0
-#define SLE_RST 4
-#define SLE_CK 6
-#define SLE_IO 7
+#define SLE_PRESENT 3
+#define SLE_RST 0
+#define SLE_CK 1
+#define SLE_IO 2
 
 /* You should not change anything below */
 #define OUT 2
