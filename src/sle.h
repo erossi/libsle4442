@@ -1,5 +1,5 @@
 /* This file is part of libsle4442.
- * Copyright (C) 2010 Enrico Rossi
+ * Copyright (C) 2010, 2011 Enrico Rossi
  *
  * Libsle4442 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,6 +50,10 @@
 
 #endif /* Make lib */
 
+/* Uncomment to enable internal pullup resistor,
+   it will drain a lot of power in sleep modes */
+#define SLE_MICRO_PULLUP
+
 /*!
   \struct sle_t sle.h "sle.h"
   \brief The main struct which represent the status of the card.
@@ -92,6 +96,8 @@ struct sle_t {
 	uint8_t auth;
 };
 
+void sle_enable_port(void);
+void sle_disable_port(void);
 struct sle_t* sle_init(void);
 void sle_free(struct sle_t *sle);
 void sle_reset(uint8_t *atr);
@@ -105,4 +111,3 @@ void sle_write_memory(struct sle_t *sle, const uint8_t addr, const uint8_t len);
 void sle_write_secmem(struct sle_t *sle);
 
 #endif
-

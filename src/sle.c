@@ -1,5 +1,5 @@
 /* This file is part of libsle4442.
- * Copyright (C) 2010 Enrico Rossi
+ * Copyright (C) 2010, 2011 Enrico Rossi
  *
  * Libsle4442 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,19 +21,20 @@
 #include <avr/io.h>
 #include "sle.h"
 
-struct sle_t* sle_init(void)
-{
-	struct sle_t *sle;
-
+void sle_enable_port(void) {
 	/*
 	   Inital PORT setup:
-	   Card present 1 Pulled UP by micro
+	   Card present 1
 	   Reset 0
 	   Clock 0
-	   IO 1 Pulled UP when Reading
+	   IO 1
 	 */
 
-	SLE_PORT = _BV(SLE_PRESENT) | _BV(SLE_IO);
+#ifdef SLE_MICRO_PULLUP
+	SLE_PORT |= _BV(SLE_PRESENT) | _BV(SLE_IO);
+#else
+	SLE_PORT &= ~(_BV(SLE_PRESENT) | _BV(SLE_IO));
+#endif
 
 	/*
 	   Initial DDR setup:
@@ -43,7 +44,17 @@ struct sle_t* sle_init(void)
 	   IO - BiDirectional begin IN
 	 */
 
-	SLE_DDR = _BV(SLE_RST) | _BV(SLE_CK);
+	SLE_DDR |= _BV(SLE_RST) | _BV(SLE_CK);
+}
+
+void sle_disable_port(void) {
+	SLE_DDR &= ~(_BV(SLE_RST) | _BV(SLE_CK));
+	SLE_PORT &= ~(_BV(SLE_PRESENT) | _BV(SLE_IO));
+}
+
+struct sle_t* sle_init(void)
+{
+	struct sle_t *sle;
 
 	sle = malloc(sizeof(struct sle_t));
 	sle->atr = malloc(4);
@@ -53,11 +64,13 @@ struct sle_t* sle_init(void)
 	/* Normally we should use only 1, but during the auth
 	   it's wise to keep all the 5 processing result */
 	sle->ck_proc = malloc(5);
+	sle_enable_port();
 	return(sle);
 }
 
 void sle_free(struct sle_t *sle)
 {
+	sle_disable_port();
 	free(sle->ck_proc);
 	free(sle->security_memory);
 	free(sle->protected_memory);
