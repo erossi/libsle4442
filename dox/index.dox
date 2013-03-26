@@ -1,0 +1,32 @@
+/*!
+\mainpage Main page.
+\author Enrico Rossi
+\copyright GNU Lesser General Public License.
+\version UnKnown
+
+\note ** WORKING IN PROGRESS **
+
+\section main_intro SLE4442 memory card.
+
+ Describe these type of cards.
+
+\subsection main_links Link to the other pages.
+
+This manual is divided in the following sections:
+ - \subpage schematics
+ - \subpage layout
+ - \subpage soldering
+ - \subpage box_setup
+ - \subpage bom
+ - \subpage firmware Writing firmware to the micro.
+ - \subpage assembly
+ - \subpage usage
+ - \subpage troubleshoot
+
+\subsection main_specs Technical specs.
+
+\section main_operation Fun
+
+\subsection nocard Without card.
+
+*/
