@@ -53,6 +53,13 @@
 #define SLE_IO 2
 
 /* You should not change anything below */
+/*!
+ * \def IN
+ * IN
+ *
+ * \def OUT
+ * OUT
+ */
 #define OUT 2
 #define IN 3
 
@@ -97,4 +104,3 @@ void send_cmd(const uint8_t control, const uint8_t address, const uint8_t data);
 uint8_t processing(void);
 
 #endif
-
