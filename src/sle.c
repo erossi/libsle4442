@@ -1,5 +1,5 @@
 /* This file is part of libsle4442.
- * Copyright (C) 2010, 2011 Enrico Rossi
+ * Copyright (C) 2010, 2011, 2013 Enrico Rossi
  *
  * Libsle4442 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,33 +17,34 @@
  */
 
 /*!
-  \file sle.c
-  \brief API interface.
-
-  Low level bit banging driver to read and write to
-  Sle4442 card.
-  */
+ * \file sle.c
+ * \brief API interface.
+ *
+ * Low level bit banging driver to read and write to
+ * Sle4442 card.
+ *
+ */
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <avr/io.h>
 #include "sle.h"
 
-/*! Configure the I/O pin as:
+/*! Initialize the port.
  *
+ * Configure the I/O port's pin as:
  * Card present pin: IN
  * Reset: OUT
  * Clock: OUT
  * IO line: IN
+ *
+ * \note If an internal PULL-UP resistors is required
+ * for the IN pin, the define SLE_MICRO_PULLUP macro.
+ * For example if we have connected the card's pin
+ * directly to the micro without external resistors.
  */
-void sle_enable_port(void) {
-	/*
-	 * Do we need an internal PULL-UP resistors
-	 * for the IN pin?
-	 * For example if we have connected the card's pin
-	 * directly to the micro without external resistors.
-	 */
-
+void sle_enable_port(void)
+{
 #ifdef SLE_MICRO_PULLUP
 	SLE_PORT |= _BV(SLE_PRESENT) | _BV(SLE_IO);
 #else
@@ -54,11 +55,13 @@ void sle_enable_port(void) {
 	SLE_DDR |= _BV(SLE_RST) | _BV(SLE_CK);
 }
 
-/*! Disable the port and restore all the used pins to IN.
+/*!
+ * Disable the port and restore all the used pins to IN.
  *
  * \note also restore internals pull-up resistors to OFF.
  */
-void sle_disable_port(void) {
+void sle_disable_port(void)
+{
 	SLE_DDR &= ~(_BV(SLE_RST) | _BV(SLE_CK));
 	SLE_PORT &= ~(_BV(SLE_PRESENT) | _BV(SLE_IO));
 }
@@ -82,6 +85,7 @@ struct sle_t* sle_init(void)
 	   it's wise to keep all the 5 processing result */
 	sle->ck_proc = malloc(5);
 	sle_enable_port();
+
 	return(sle);
 }
 
@@ -89,10 +93,9 @@ struct sle_t* sle_init(void)
  * Free the memory allocated to the structure and disable the
  * port connected to the card's reader.
  *
+ * \param sle the allocated structure.
  * \note In theory this function should never be called, unless
  * the software have no need for the card reader.
- *
- * \param sle the allocated structure.
  */
 void sle_free(struct sle_t *sle)
 {
@@ -105,9 +108,10 @@ void sle_free(struct sle_t *sle)
 	free(sle);
 }
 
-/*! \brief reset the card.
+/*!
+ * \brief reset the card.
  *
- * \param pointer to the atr string sent to reset the card.
+ * \param atr pointer to the string sent to reset the card.
  */
 void sle_reset(uint8_t *atr)
 {
@@ -116,6 +120,9 @@ void sle_reset(uint8_t *atr)
 
 /*!
  * Check for the presence of the card.
+ *
+ * The status of the card will be stored into the struct.
+ *
  * \param sle the struct need to store the card's status.
  * \return Card present or not.
  */
@@ -132,6 +139,7 @@ uint8_t sle_present(struct sle_t *sle)
 
 /*!
  * Dump the card's memory into the mm area.
+ *
  * \param mm the storage area where to dump the memory card.
  * \warning the dump memory should be already allocated and
  * have enought space for the card (256 Byte).
@@ -149,7 +157,8 @@ void sle_dump_memory(uint8_t *mm)
 }
 
 /*!
- * Dump the protected memory only.
+ * Dump the protected memory.
+ *
  * \param mm allocated 4 Byte space for the dump.
  * \warning the space have to be already allocated.
  */
@@ -165,6 +174,12 @@ void sle_dump_prt_memory(uint8_t *mm)
 	ck_pulse(); /* leave the card to high imp. I/O line */
 }
 
+/*!
+ * Dump the secure memory.
+ *
+ * \param mm allocated 4 Byte space for the dump.
+ * \warning the space have to be already allocated.
+ */
 void sle_dump_secmem(uint8_t *mm)
 {
 	uint8_t i;
@@ -177,6 +192,12 @@ void sle_dump_secmem(uint8_t *mm)
 	ck_pulse(); /* leave the card to high imp. I/O line */
 }
 
+/*!
+ * Dump the all memories, normal, secure and protected memory.
+ *
+ * \param sle struct with allocated space for the dump.
+ * \warning the space have to be already allocated.
+ */
 void sle_dump_allmem(struct sle_t *sle)
 {
 	sle_dump_memory(sle->main_memory);
@@ -184,6 +205,16 @@ void sle_dump_allmem(struct sle_t *sle)
 	sle_dump_secmem(sle->security_memory);
 }
 
+/*!
+ * Perform the authentication.
+ *
+ * See the datasheet on how to authenticate.
+ *
+ * \param sle the struct allocated for the card.
+ * \param pin1 byte 1 of the pin number.
+ * \param pin2 byte 2 of the pin number.
+ * \param pin3 byte 3 of the pin number.
+ */
 void sle_auth(struct sle_t *sle, const uint8_t pin1, const uint8_t pin2,
 		const uint8_t pin3)
 {
@@ -218,6 +249,16 @@ void sle_auth(struct sle_t *sle, const uint8_t pin1, const uint8_t pin2,
 		sle->auth = 1;
 }
 
+/*!
+ * Write a group of byte into the memory card.
+ *
+ * Write one byte at a time from the allocated memory in
+ * the sle struct starting from base for len byte.
+ * 
+ * \param sle the allocated struct.
+ * \param base the base memory to start copying from.
+ * \param len how many byte to copy.
+ */
 void sle_write_memory(struct sle_t *sle, const uint8_t base,
 		const uint8_t len)
 {
@@ -232,6 +273,14 @@ void sle_write_memory(struct sle_t *sle, const uint8_t base,
 	}
 }
 
+/*!
+ * Write the secure memory.
+ *
+ * Copy the 4 byte secure memory from the allocated struct to the card.
+ *
+ * \param sle the allocated struct.
+ *
+ */
 void sle_write_secmem(struct sle_t *sle)
 {
 	uint8_t i;

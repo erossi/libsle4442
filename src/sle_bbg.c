@@ -1,5 +1,5 @@
 /* This file is part of libsle4442.
- * Copyright (C) 2010 Enrico Rossi
+ * Copyright (C) 2010, 2013 Enrico Rossi
  *
  * Libsle4442 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,12 @@
 #include <util/delay.h>
 #include "sle_bbg.h"
 
-/*! single clock pulse */
+/*!
+ * Single clock pulse.
+ *
+ * This function generates a single clock cycle onto the
+ * clock line.
+ */
 void ck_pulse(void)
 {
 	set_ck_1;
@@ -39,9 +44,18 @@ void ck_pulse(void)
 	ck_delay();
 }
 
-/*! Set's I/O line to IN, OUT, 0 or 1.
-  \details When in In mode the 0 or 1 command internal pull up resistor.
-  \param[in] io 0 - 3 = 0, 1, IN, OUT
+/*!
+ * Set's I/O line to one of: IN, OUT, 0 or 1.
+ *
+ * IN: The port is in input, the subsequent call with:
+ *  0 - Disable internal pull-up resistor.
+ *  1 - Enable internal pull-up resistor.
+ *
+ * OUT: The port in in output mode, the subsequent call with:
+ *  0 - Line is logic 0 (GND).
+ *  1 - Line is logic 1 (+5V).
+ *
+ * \param io  can be 0, 1, IN, OUT
  */
 void set_io(const uint8_t io)
 {
@@ -61,8 +75,10 @@ void set_io(const uint8_t io)
 	}
 }
 
-/*! Send the START sequence.
-  \warning This will also sets IO to OUT.
+/*!
+ * Send the START sequence.
+ *
+ * \warning IO line will be set to OUT.
  */
 void send_start(void)
 {
@@ -77,8 +93,10 @@ void send_start(void)
 	ck_delay();
 }
 
-/*! Send the STOP sequence.
-  \warinig This sets IO from OUT to IN
+/*!
+ * Send the STOP sequence.
+ *
+ * \warning IO line will be set to IN.
  */
 void send_stop(void)
 {
@@ -92,15 +110,26 @@ void send_stop(void)
 	ck_delay();
 }
 
-/*! read io bit on the 1 phase of the ck line */
+/*!
+ * Read a byte from IO line.
+ *
+ * The function geneates 8 clock pulse cycle and on each of them
+ * a bit is read from the IO line.
+ *
+ * \return The byte read.
+ * \note The IO line have to be already set to INPUT.
+ */
 uint8_t read_byte(void)
 {
 	uint8_t i;
-	uint8_t byte=0;
+	uint8_t byte = 0;
 
-	for (i=0;i<8;i++) {
+	for (i=0; i<8; i++) {
 		set_ck_1;
 
+		/* if we found a logic 1 on the IO line
+		 * then set this bit in the byte.
+		 */
 		if (SLE_PIN & _BV(SLE_IO))
 			byte |= _BV(i);
 
@@ -112,7 +141,15 @@ uint8_t read_byte(void)
 	return(byte);
 }
 
-/*! write io bit on the 0 phase of the ck line */
+/*!
+ * Write a byte to the IO line.
+ *
+ * The function write a byte a singe bit at a time,
+ * the bit is written on the 0 phase of the ck line, see datasheet.
+ *
+ * \param byte the byte to be sent.
+ * \note the IO line should be already set to output.
+ */
 void send_byte(uint8_t byte)
 {
 	uint8_t i;
@@ -131,7 +168,16 @@ void send_byte(uint8_t byte)
 	}
 }
 
-/*! send the rst sequence to the card */
+/*!
+ * Send the reset (rst) sequence to the card.
+ *
+ * See datasheet for details on the RST sequence.
+ *
+ * \param *atr ptr to mem area where this function stores
+ * the 4 byte ATR returned after the RST.
+ *
+ * \warning The 4 byte ATR have to be already allocated.
+ */
 void send_rst(uint8_t *atr)
 {
 	uint8_t i;
@@ -152,8 +198,13 @@ void send_rst(uint8_t *atr)
 	}
 }
 
-/*! send a complete command sequence.
-  \warning After a command IO in IN.
+/*!
+ * Send a complete command sequence.
+ * 
+ * \param control the control byte.
+ * \param address the address byte.
+ * \param data the data byte.
+ * \warning After the command sequence, IO line is left in IN mode.
  */
 void send_cmd(const uint8_t control, const uint8_t address, const uint8_t data)
 {
@@ -164,8 +215,12 @@ void send_cmd(const uint8_t control, const uint8_t address, const uint8_t data)
 	send_stop();
 }
 
-/*! wait for the card to process the command.
-  \return the number of clock cycle waited.
+/*!
+ * Wait for the card to process the command.
+ *
+ * \return the number of clock cycle waited.
+ * \warning if the card has problem and no bit
+ * comes from the IO line, the system hangs here.
  */
 uint8_t processing(void)
 {
@@ -179,4 +234,3 @@ uint8_t processing(void)
 	ck_pulse();
 	return (i);
 }
-

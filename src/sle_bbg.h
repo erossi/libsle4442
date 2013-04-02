@@ -1,5 +1,5 @@
 /* This file is part of libsle4442.
- * Copyright (C) 2010 Enrico Rossi
+ * Copyright (C) 2010, 2013 Enrico Rossi
  *
  * Libsle4442 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,21 +28,27 @@
 #define SLE_BBG_H
 
 /*!
-  \def SLE_PORT
-  Port the card's reader is conneted to.
-
-  \def SLE_PRESENT
-  PIN connected to the present card switch
-
-  \def SLE_RST
-  PIN connected to the reset pin of the card.
-
-  \def SLE_CK
-  clock pin of the card
-
-  \def SLE_IO
-  I/O pin of the card.
-*/
+ * \def SLE_PORT
+ * Port the card's reader is conneted to.
+ *
+ * \def SLE_PIN
+ * The input port definition where the card is connected to.
+ *
+ * \def SLE_DDR
+ * The data direction register to handle the port's line direction.
+ *
+ * \def SLE_PRESENT
+ * PIN connected to the present card switch.
+ *
+ * \def SLE_RST
+ * PIN connected to the reset pin of the card.
+ *
+ * \def SLE_CK
+ * clock pin of the card.
+ *
+ * \def SLE_IO
+ * I/O pin of the card.
+ */
 
 #define SLE_PORT PORTA
 #define SLE_PIN PINA
@@ -53,38 +59,49 @@
 #define SLE_IO 2
 
 /* You should not change anything below */
+
 /*!
  * \def IN
- * IN
+ * a simple macro to define IN as 3.
  *
  * \def OUT
- * OUT
+ * a simple macro to define OUT as 2.
  */
 #define OUT 2
 #define IN 3
 
 /*!
-  \def ck_delay()
-  The delay in usec for half of the wave.
-  10Khz = 100usec
-  20Khz = 50usec, half wave = 25 usec
-  Remeber delay is only HALF of the freq.
-  20Khz total
-
-  \def ck_delay_front()
-  The MIN delay for a front phase between fronts of ck
-  and/or rst and/or IO
-
-  \def ck_delay_reset()
-  delay reset = 1.
-  \def set_ck_1
-  CK line to 1.
-  \def set_ck_0
-  CK line to 0.
-  \def set_rst_1
-  RST line to 1.
-  \def set_rst_0
-  RST line to 0.
+ * \def ck_delay()
+ * The delay in usec for half of the wave.
+ *
+ * example:
+ *
+ * 10Khz = 100usec.
+ *
+ * 20Khz = 50usec, half wave = 25 usec.
+ *
+ * Remeber delay is only HALF of the freq.
+ * 20Khz total
+ *
+ * \def ck_delay_front()
+ * The MIN delay for a front phase between fronts of ck
+ * and/or rst and/or IO.
+ *
+ * \def ck_delay_reset()
+ * delay reset = 1.
+ *
+ * \def set_ck_1
+ * CK line to 1.
+ *
+ * \def set_ck_0
+ * CK line to 0.
+ *
+ * \def set_rst_1
+ * RST line to 1.
+ *
+ * \def set_rst_0
+ * RST line to 0.
+ *
  */
 
 #define ck_delay() _delay_us(25)
