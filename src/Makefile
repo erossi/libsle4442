@@ -1,5 +1,5 @@
 # This file is part of libsle4442.
-# Copyright (C) 2010 Enrico Rossi
+# Copyright (C) 2010, 2013 Enrico Rossi
 #
 # Libsle4442 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as

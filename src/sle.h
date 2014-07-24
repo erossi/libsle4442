@@ -28,6 +28,9 @@
 
 #ifdef MAKE_LIB
 
+/* Include the low level interface only if the library
+ * needs to be compiled.
+ */
 #include "sle_bbg.h"
 
 /*!
